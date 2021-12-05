@@ -9,7 +9,7 @@ import (
 
 func main() {
 	log.Println("DAY 1")
-	solve_a()
+	solve_b()
 }
 
 func solve_a() {
@@ -35,7 +35,45 @@ func solve_a() {
 	log.Println("increases:", increases-1)
 
 	file.Close()
+}
 
+func solve_b() {
+	file, err := os.Open("input_a_day1.txt")
+	check(err)
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var distances []string
+
+	increases := 0
+
+	for scanner.Scan() {
+		distances = append(distances, scanner.Text())
+	}
+
+	var_x := 0
+	var_y := 0
+	var_z := 0
+
+	old_sum := 0
+	actual_sum := 0
+
+	for x := 0; x < len(distances)-2; x++ {
+		var_x, _ = strconv.Atoi(distances[x])
+		var_y, _ = strconv.Atoi(distances[x+1])
+		var_z, _ = strconv.Atoi(distances[x+2])
+
+		actual_sum = var_x + var_y + var_z
+
+		if actual_sum > old_sum {
+			increases++
+		}
+		old_sum = actual_sum
+	}
+
+	log.Println("INCREASES:", increases-1)
+
+	file.Close()
 }
 
 func check(e error) {
