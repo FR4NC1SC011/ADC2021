@@ -5,15 +5,19 @@ import (
 	"log"
 	"os"
 	"strconv"
+    "fmt"
 )
 
 func main() {
 	log.Println("DAY 1")
+        fmt.Println("PART 1:")
+	solve_a()
+        fmt.Println("PART 2:")
 	solve_b()
 }
 
 func solve_a() {
-	file, err := os.Open("input_a_day1.txt")
+	file, err := os.Open("inputs/input_day1.txt")
 	check(err)
 
 	increases := 0
@@ -38,7 +42,7 @@ func solve_a() {
 }
 
 func solve_b() {
-	file, err := os.Open("input_a_day1.txt")
+	file, err := os.Open("inputs/input_day1.txt")
 	check(err)
 
 	scanner := bufio.NewScanner(file)
@@ -80,4 +84,5 @@ func check(e error) {
 	if e != nil {
 		log.Fatal("Error:", e)
 	}
+    
 }
