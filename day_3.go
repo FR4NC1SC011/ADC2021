@@ -10,7 +10,7 @@ import (
 
 func main() {
 	log.Println("Solve Day 3")
-	solve_a()
+	solve_b()
 }
 
 func solve_a() {
@@ -58,7 +58,68 @@ func solve_a() {
 	fmt.Println("Answer:", result)
 
 	readFile.Close()
+}
 
+func solve_b() {
+	log.Println("solve Part B")
+
+	readFile, err := os.Open("examples/sample3.txt")
+	check(err)
+
+	//	most_common := false 					// true if most common is one; false if is zero
+
+	fileScanner := bufio.NewScanner(readFile)
+	fileScanner.Split(bufio.ScanLines)
+
+	diagnostic_report := make([]string, 0)
+
+	for fileScanner.Scan() {
+		diagnostic_report = append(diagnostic_report, fileScanner.Text())
+	}
+
+	fmt.Println(diagnostic_report)
+
+	calculate_oxygen_generator_rating(diagnostic_report)
+
+	readFile.Close()
+
+
+}
+
+func calculate_oxygen_generator_rating(diagnostic_report []string) {
+	len_seq := len(diagnostic_report[0])
+
+	for i := 0; i < len_seq; i++ {
+		fmt.Println(diagnostic_report)
+		x := calculate_most_common_bit(diagnostic_report, i)
+		fmt.Println("Most Common:", string(x))
+
+		for j, y := range diagnostic_report {
+			if y[i] == x {
+				remove(diagnostic_report, j)
+			}
+		}
+	}
+	fmt.Println(diagnostic_report)
+}
+
+func calculate_most_common_bit(seq []string, position int) byte {
+	one := 0
+	zero := 0
+
+	for _, x := range seq {
+		if x[position] == '1' {
+			one += 1
+		} else {
+			zero += 1
+		}
+	}
+
+	if float64(one) / float64(len(seq)) >= 0.5 {
+		return '1'
+	} else {
+		return '0'
+	}
 }
 
 func binary_to_int(b string) int64 {
@@ -66,6 +127,10 @@ func binary_to_int(b string) int64 {
 	return x
 }
 
+func remove(s []string, i int) []string {
+    s[i] = s[len(s)-1]
+    return s[:len(s)-1]
+}
 
 func check(e error) {
 	if e != nil {
