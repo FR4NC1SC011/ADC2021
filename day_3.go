@@ -63,7 +63,7 @@ func solve_a() {
 func solve_b() {
 	log.Println("solve Part B")
 
-	readFile, err := os.Open("examples/sample3.txt")
+	readFile, err := os.Open("inputs/input_day3.txt")
 	check(err)
 
 	//	most_common := false 					// true if most common is one; false if is zero
@@ -77,30 +77,53 @@ func solve_b() {
 		diagnostic_report = append(diagnostic_report, fileScanner.Text())
 	}
 
-	fmt.Println(diagnostic_report)
 
-	calculate_oxygen_generator_rating(diagnostic_report)
+
+	oxygen := binary_to_int(calculate_oxygen_generator_rating(diagnostic_report))
+	co2 := binary_to_int(calculate_co2_scrubber_rating(diagnostic_report))
+
+
+	fmt.Println("OXYGEN:", oxygen)
+	fmt.Println("CO2:", co2)
+
+	fmt.Println("ANSWER:", oxygen * co2)
 
 	readFile.Close()
 
 
 }
 
-func calculate_oxygen_generator_rating(diagnostic_report []string) {
+func calculate_oxygen_generator_rating(diagnostic_report []string) string {
 	len_seq := len(diagnostic_report[0])
 
 	for i := 0; i < len_seq; i++ {
-		fmt.Println(diagnostic_report)
 		x := calculate_most_common_bit(diagnostic_report, i)
-		fmt.Println("Most Common:", string(x))
 
-		for j, y := range diagnostic_report {
-			if y[i] == x {
-				remove(diagnostic_report, j)
+		for _, y := range diagnostic_report {
+			if y[i] != x {
+				//fmt.Println("Remove:", diagnostic_report[j])
+				diagnostic_report = remove(diagnostic_report, y)
 			}
 		}
 	}
-	fmt.Println(diagnostic_report)
+	return diagnostic_report[0]
+}
+
+func calculate_co2_scrubber_rating(diagnostic_report []string) string {
+	len_seq := len(diagnostic_report[0])
+
+	for i := 0; i < len_seq; i++ {
+		x := calculate_less_common_bit(diagnostic_report, i)
+
+		for _, y := range diagnostic_report {
+			if y[i] != x {
+				//fmt.Println("Remove:", diagnostic_report[j])
+				diagnostic_report = remove(diagnostic_report, y)
+			}
+		}
+	}
+	return diagnostic_report[0]
+
 }
 
 func calculate_most_common_bit(seq []string, position int) byte {
@@ -122,14 +145,47 @@ func calculate_most_common_bit(seq []string, position int) byte {
 	}
 }
 
+func calculate_less_common_bit(seq []string, position int) byte {
+	one := 0
+	zero := 0
+
+	for _, x := range seq {
+		if x[position] == '1' {
+			one += 1
+		} else {
+			zero += 1
+		}
+	}
+
+	if float64(zero) / float64(len(seq)) <= 0.5 {
+		return '0'
+	} else {
+		return '1'
+	}
+}
+
+
 func binary_to_int(b string) int64 {
 	x, _ := strconv.ParseInt(b, 2, 64)
 	return x
 }
 
-func remove(s []string, i int) []string {
-    s[i] = s[len(s)-1]
-    return s[:len(s)-1]
+func remove(s []string, i string) []string {
+    //s[i] = s[len(s)-1]
+    //return s[:len(s)-1]
+	new_slice := make([]string, 0)
+
+	for _, x := range s {
+		if len(s) == 1 {
+			return s
+		}
+
+		if x != i {
+			new_slice = append(new_slice, x)
+		}
+	}
+
+	return new_slice
 }
 
 func check(e error) {
